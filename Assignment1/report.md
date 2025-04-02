@@ -1,6 +1,6 @@
-# P2P File Sharing System - Experiment Report
+# P2P File Sharing System
 
-## System Overview
+## Overview
 This project implements a simplified BitTorrent-like peer-to-peer (P2P) file sharing system using Python. It includes three main components:
 
 - **Tracker**: Maintains metadata of shared files and a list of active seeders.
@@ -18,62 +18,55 @@ project/
 ├── peer_6881/             # Seeder's shared folder
 │   └── example.txt        # Copied shared file
 ├── peer_6882/             # Requester's folder
-│   └── example.txt        # Downloaded file
+│   ├── example.txt        # Downloaded file
+│   └── example.txt.torrent # Copied torrent file from Seeder
 └── report.md              # Report
 
 ## Execution Steps
 
 ### Step 1: Start the tracker (25 pts)
+
+**Implementation**: The tracker is implemented using **Flask**, which listens for HTTP requests on `127.0.0.1:5001`. It handles two types of requests: Seeder registration and peer (Requester) queries.
+
+**Result**: The Tracker successfully listens for connections, stores Seeder information, and returns the list of active Seeders upon request.
+
 ```bash
 python tracker.py
 ```
 
 **Expected output:**
 
-```
-* Running on http://127.0.0.1:5001
-```
+![image-20250401201900807](C:\Users\laz56\AppData\Roaming\Typora\typora-user-images\image-20250401201900807.png)
 
 ### Step 2: Start the seeder (30 pts)
+
+**Implementation**: The Seeder node takes a user-specified file, splits it into 1MB pieces, hashes each piece with SHA-1, and generates a `.torrent` file using **bencodepy**. The Seeder then registers the file information (info_hash and shared file list) with the Tracker.
+
+**Result**: The Seeder successfully creates a `.torrent` file and registers with the Tracker. The file is placed in the `peer_6881/` folder, and the `.torrent` file is copied to the Requester's folder (`peer_6882/`).
+
+ *(Note: The generation process may take a few seconds.)*
 
 ```
 python seeder.py
 ```
 
-**Prompt:**
-
-Enter the file name to share :  (your_input)
-
 **Expected output:**
 
-``` 
-.torrent file created: your_file.txt.torrent
-.torrent file copied to requester folder
- Info hash: <hash_value>
- Successfully registered with tracker.
-* Running on http://127.0.0.1:6881
-```
-
-
+![image-20250401201957425](C:\Users\laz56\AppData\Roaming\Typora\typora-user-images\image-20250401201957425.png)
 
 ### Step 3: Start the requester (35 pts)
+
+**Implementation**: The Requester reads the `.torrent` file, extracts the `info_hash`, and queries the Tracker to get the list of active Seeders. It then downloads the file from one of the Seeders.
+
+**Result**: The Requester successfully downloads the file from the Seeder and saves it in the `peer_6882/` folder.
 
 ``` 
 python requester.py
 ```
 
-**Prompt:**
-
-Enter the path to the .torrent file: (peer_6882/your_file.txt.torrent)
-
 **Expected output:**
 
-``` 
- Retrieved info_hash: <info_hash_value>
- Found 1 seeder(s), starting download...
- Downloading your_file.txt from Seeder 127.0.0.1:6881
- File downloaded: your_file.txt, saved to: peer_6882/your_file.txt
-```
+![image-20250401202229940](C:\Users\laz56\AppData\Roaming\Typora\typora-user-images\image-20250401202229940.png)
 
 
 
@@ -86,3 +79,4 @@ Enter the path to the .torrent file: (peer_6882/your_file.txt.torrent)
 - **Requester** reads the `.torrent` file, extracts the `info_hash`, queries the Tracker, and downloads the file via HTTP from a Seeder.
 
 - File transfer and peer coordination were fully verified to work.
+

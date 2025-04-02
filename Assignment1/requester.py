@@ -86,7 +86,7 @@ def download_file(file_name, peer_ip, peer_port, local_port):
 
 def request_file(info_hash):
     """ Requests a file from other peers based on info_hash. """
-    print(f"🔍 Fetching peers for info_hash: {info_hash}...")
+    print(f" Fetching peers for info_hash: {info_hash}...")
 
     # Step 1: Get the list of seeders from the tracker
     seeders = get_peers_from_tracker(info_hash)
